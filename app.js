@@ -63,3 +63,85 @@ const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+
+const galleryContainerEl = document.querySelector('.js-gallery')
+const lightboxImgEl = document.querySelector('.lightbox__image')
+const lightboxEl = document.querySelector('.js-lightbox')
+const btnCloseEl = document.querySelector('button[data-action="close-lightbox"]')
+
+
+
+function createGaleryList(array) {
+   return array.map(item => `<li class="gallery__item">
+      <a class="gallery__link" href="./">
+      <img class="gallery__image" src="${item.preview}" data-source="${item.original}" alt="${item.description}"/></a>
+    </li>
+    `).join('')
+   
+}
+galleryContainerEl.innerHTML = createGaleryList(galleryItems)
+
+galleryContainerEl.addEventListener('click', onClickOpenModal)
+
+
+function onClickOpenModal(e) {
+  
+  e.preventDefault()
+  if (e.target.nodeName !== 'IMG') return;
+  lightboxEl.classList.add('is-open')
+    
+  modalOpen(e.target.dataset.source, e.target.alt, e.target.src);
+  lightboxEl.addEventListener('click', onClickCloseModal)
+  window.addEventListener('keydown', onEscPressCloseModal)
+  // window.addEventListener('keydown', onClikArrowChangeImg)
+}
+  
+
+function onClickCloseModal(e) {
+  
+  if (e.target === btnCloseEl || e.target.classList.contains('lightbox__overlay')) {
+    lightboxEl.removeEventListener('click', onClickCloseModal)
+    // window.removeEventListener('keydown', onClikArrowChangeImg)
+    window.removeEventListener('keydown', onEscPressCloseModal)
+  modalClose(lightboxEl, lightboxImgEl)
+}
+}
+function onEscPressCloseModal(e) {
+  
+  if (e.code === 'Escape') {
+    window.removeEventListener('keydown', onEscPressCloseModal)
+    // window.removeEventListener('keydown', onClikArrowChangeImg)
+    modalClose(lightboxEl, lightboxImgEl)
+  }
+};
+
+// function onClikArrowChangeImg(e) {
+//     if (e.code === 'ArrowRight' || e.code === 'ArrowLeft') {
+//       console.log(e.code);
+//       // replaceImg(src, sourse)
+   
+//   }
+
+// }
+
+// function replaceImg() {
+//   const imgArray = document.querySelectorAll('.gallery__image');
+//   imgArray.forEach(item => {
+//     console.log(item)
+   //   })
+
+// }
+// replaceImg();
+
+function modalClose(elemBox, elemImg) {
+elemBox.classList.remove('is-open')
+  elemImg.src = ''
+  elemImg.alt = ''
+};
+function modalOpen(sourse, alt, src) {
+    lightboxImgEl.src = sourse;
+  lightboxImgEl.alt = alt;
+  lightboxImgEl.setAttribute(`data-source`, src)
+  
+};
